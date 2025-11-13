@@ -150,6 +150,7 @@ function App() {
     category: "",
     price: "",
     inStock: true,
+    description: "",
   });
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("none");
@@ -212,8 +213,13 @@ function App() {
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
-    const { name, category, price, inStock } = form;
-    if (!name.trim() || !category.trim() || price === "") {
+    const { name, category, price, inStock, description } = form;
+    if (
+      !name.trim() ||
+      !description.trim() ||
+      !category.trim() ||
+      price === ""
+    ) {
       alert("Please fill Name, Category and Price");
       return;
     }
@@ -223,6 +229,7 @@ function App() {
       category: category.trim(),
       price: parseInt(price),
       inStock: Boolean(inStock),
+      description: description.trim(),
     };
     setProducts((prev) => [newProduct, ...prev]);
     setIsAddOpen(false);
@@ -233,14 +240,16 @@ function App() {
   };
   return (
     <>
-      <ThemeProvider theme={theme} sx={{ p: 0 }}>
+      <ThemeProvider theme={theme} sx={{ pr: { xs: 2, md: 0 } }}>
         <CssBaseline />
-        <AppBar
-          position="sticky"
-          sx={{ background: "#074276", width: "100%", m: 0, p: 0 }}
-        >
+        <AppBar position="sticky" sx={{ background: "#074276", width: "100%" }}>
           <Toolbar
-            sx={{ display: "flex", justifyContent: "space-between", p: 0 }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              m: 0,
+              p: 0,
+            }}
           >
             <Typography variant="h6">Product Dashboard</Typography>
 
@@ -329,6 +338,7 @@ function App() {
               justifyContent: { xs: "center", md: "space-around" },
               gap: "10px",
               flexWrap: "wrap",
+              width: "100%",
             }}
           >
             {visibleProducts.map((p) => (
@@ -465,7 +475,15 @@ function App() {
                   fullWidth
                   helperText="e.g. Electronics, Home, Apparel"
                 />
-
+                <TextField
+                  label="Description"
+                  variant="standard"
+                  name="description"
+                  value={form.description}
+                  onChange={handleFormChange}
+                  required
+                  fullWidth
+                />
                 <TextField
                   label="Price"
                   name="price"
@@ -492,9 +510,15 @@ function App() {
             </DialogContent>
 
             <DialogActions>
-              <Button onClick={handleAddClose}>Cancel</Button>
-              <Button type="submit" variant="contained">
-                Add
+              <Button onClick={handleAddClose} color="error">
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ borderRadius: "50px" }}
+              >
+                Add Product
               </Button>
             </DialogActions>
           </form>

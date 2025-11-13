@@ -239,292 +239,297 @@ function App() {
     setSortOrder((s) => (s === "none" ? "asc" : s === "asc" ? "desc" : "none"));
   };
   return (
-    <>
-      <ThemeProvider theme={theme} sx={{ pr: { xs: 2, md: 0 } }}>
+    <Box sx={{ p: 0, m: 0 }}>
+      <ThemeProvider theme={theme} sx={{ p: 0, m: 0 }}>
         <CssBaseline />
-        <AppBar position="sticky" sx={{ background: "#074276", width: "100%" }}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              m: 0,
-              p: 0,
-            }}
-          >
-            <Typography variant="h6">Product Dashboard</Typography>
+        <Box sx={{ width: "100vw", height: "100vh" }}>
+          <AppBar position="sticky" sx={{ background: "#074276" }}>
+            <Toolbar
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography variant="h6">Product Dashboard</Typography>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={darkMode}
-                    onChange={() => setDarkMode((m) => !m)}
-                  />
-                }
-                label={darkMode ? <DarkMode /> : <LightMode />}
-              />
-              <Button
-                startIcon={<Add />}
-                variant="contained"
-                onClick={openAdd}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={darkMode}
+                      onChange={() => setDarkMode((m) => !m)}
+                    />
+                  }
+                  label={darkMode ? <DarkMode /> : <LightMode />}
+                />
+                <Button
+                  startIcon={<Add />}
+                  variant="contained"
+                  onClick={openAdd}
+                  sx={{
+                    textTransform: "none",
+                    borderRadius: "50px",
+                    background: "linear-gradient(to bottom, #7474bf, #348ac7);",
+                  }}
+                >
+                  Add Product
+                </Button>
+              </Box>
+            </Toolbar>
+          </AppBar>
+          <Box sx={{ height: "100%" }}>
+            <Box sx={{ mb: "20px" }}>
+              <Box
                 sx={{
-                  textTransform: "none",
-                  borderRadius: "50px",
-                  background: "linear-gradient(to bottom, #7474bf, #348ac7);",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  mt: "10px",
                 }}
               >
-                Add Product
-              </Button>
+                <TextField
+                  label="Search by Product Name"
+                  variant="standard"
+                  value={searchProductName}
+                  onChange={(e) => setSearchProductName(e.target.value)}
+                  sx={{ width: "220px" }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormControl fullWidth sx={{ width: "220px" }}>
+                  <InputLabel>Filter by Category</InputLabel>
+                  <Select
+                    label="Filter by Category"
+                    variant="standard"
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                  >
+                    {categories.map((c) => (
+                      <MenuItem value={c} key={c}>
+                        {c}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <Button
+                  variant={sortOrder === "none" ? "outlined" : "contained"}
+                  onClick={toggleSort}
+                  startIcon={<Sort />}
+                  sx={{ textTransform: "none" }}
+                >
+                  {sortOrder === "none"
+                    ? "Sort by Price"
+                    : sortOrder === "asc"
+                    ? "Price: Low → High"
+                    : "Price: High → Low"}
+                </Button>
+              </Box>
             </Box>
-          </Toolbar>
-        </AppBar>
-        <Container sx={{ mt: 4, mb: 6 }}>
-          <Box sx={{ mb: 2 }}>
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: { xs: "center", md: "space-around" },
                 gap: "10px",
                 flexWrap: "wrap",
+                width: "100%",
+                height: "100%",
+                overflowY: "auto",
               }}
             >
-              <TextField
-                label="Search by Product Name"
-                variant="standard"
-                value={searchProductName}
-                onChange={(e) => setSearchProductName(e.target.value)}
-                sx={{ width: "220px" }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <FormControl fullWidth sx={{ width: "220px" }}>
-                <InputLabel>Filter by Category</InputLabel>
-                <Select
-                  label="Filter by Category"
-                  variant="standard"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  {categories.map((c) => (
-                    <MenuItem value={c} key={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <Button
-                variant={sortOrder === "none" ? "outlined" : "contained"}
-                onClick={toggleSort}
-                startIcon={<Sort />}
-                sx={{ textTransform: "none" }}
-              >
-                {sortOrder === "none"
-                  ? "Sort by Price"
-                  : sortOrder === "asc"
-                  ? "Price: Low → High"
-                  : "Price: High → Low"}
-              </Button>
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: { xs: "center", md: "space-around" },
-              gap: "10px",
-              flexWrap: "wrap",
-              width: "100%",
-            }}
-          >
-            {visibleProducts.map((p) => (
-              <Box>
-                <Card
-                  // key={p.id}
-                  elevation={10}
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    width: prefersMobile ? "90vw" : "18rem",
-                    flexDirection: "column",
-                    borderRadius: "1rem",
-                    transition: "0.5s",
-                    background: "rgba(255, 255, 255, 0.15)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ background: "#074276", height: "4rem" }}>
-                      <Box sx={{ background: "white", position: "relative" }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: "5px",
-                            position: "absolute",
-                            left: "1rem",
-                            top: "1rem",
-                          }}
-                        >
-                          <Typography
+              {visibleProducts.map((p) => (
+                <Box>
+                  <Card
+                    // key={p.id}
+                    elevation={10}
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      width: prefersMobile ? "90vw" : "18rem",
+                      flexDirection: "column",
+                      borderRadius: "1rem",
+                      transition: "0.5s",
+                      background: "rgba(255, 255, 255, 0.15)",
+                      border: "1px solid rgba(255, 255, 255, 0.3)",
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Box sx={{ background: "#074276", height: "4rem" }}>
+                        <Box sx={{ background: "white", position: "relative" }}>
+                          <Box
                             sx={{
-                              color: "white",
-                              fontWeight: 600,
-                              fontSize: "1rem",
-                            }}
-                          >{`Name :`}</Typography>
-
-                          <Typography
-                            sx={{
-                              color: "white",
-
-                              fontWeight: 600,
-                              fontSize: "1rem",
+                              display: "flex",
+                              gap: "5px",
+                              position: "absolute",
+                              left: "1rem",
+                              top: "1rem",
                             }}
                           >
-                            {p.name}
-                          </Typography>
+                            <Typography
+                              sx={{
+                                color: "white",
+                                fontWeight: 600,
+                                fontSize: "1rem",
+                              }}
+                            >{`Name :`}</Typography>
+
+                            <Typography
+                              sx={{
+                                color: "white",
+
+                                fontWeight: 600,
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {p.name}
+                            </Typography>
+                          </Box>
                         </Box>
                       </Box>
-                    </Box>
-                    <CardMedia
-                      component="img"
-                      height="200"
-                      image={p.image}
-                      alt={p.name}
-                    />
-                    <Typography sx={{ mt: 1, mb: 1, textAlign: "start" }}>
-                      {p.description}
-                    </Typography>
-                    <Typography
-                      sx={{ mt: 1, textAlign: "start", fontWeight: "bold" }}
-                    >
-                      Price: ₹{p.price.toFixed(2)}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "start",
-                        alignContent: "start",
-                        mt: 1,
-                      }}
-                    >
-                      <Rating
-                        name="half-rating"
-                        defaultValue={2.5}
-                        precision={0.5}
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={p.image}
+                        alt={p.name}
                       />
-                    </Box>
-                    <Box
-                      sx={{
-                        mt: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                    >
-                      <FormControlLabel
-                        control={<Checkbox checked={p.inStock} disabled />}
-                        label={p.inStock ? "In Stock" : "Out of Stock"}
-                      />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
-            ))}
+                      <Typography sx={{ mt: 1, mb: 1, textAlign: "start" }}>
+                        {p.description}
+                      </Typography>
+                      <Typography
+                        sx={{ mt: 1, textAlign: "start", fontWeight: "bold" }}
+                      >
+                        Price: ₹{p.price.toFixed(2)}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "start",
+                          alignContent: "start",
+                          mt: 1,
+                        }}
+                      >
+                        <Rating
+                          name="half-rating"
+                          defaultValue={2.5}
+                          precision={0.5}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          mt: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <FormControlLabel
+                          control={<Checkbox checked={p.inStock} disabled />}
+                          label={p.inStock ? "In Stock" : "Out of Stock"}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Box>
+              ))}
 
-            {visibleProducts.length === 0 && (
-              <Grid item xs={12}>
+              {visibleProducts.length === 0 && (
                 <Box sx={{ p: 4, textAlign: "center" }}>
                   <Typography>
                     No products match the selected filters.
                   </Typography>
                 </Box>
-              </Grid>
-            )}
+              )}
+            </Box>
           </Box>
-        </Container>
+          <Dialog open={isAddOpen} onClose={handleAddClose} fullWidth>
+            <form onSubmit={handleAddSubmit}>
+              <DialogTitle>Add Product</DialogTitle>
+              <DialogContent>
+                <Box
+                  sx={{
+                    mt: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
+                  <TextField
+                    label="Name"
+                    variant="standard"
+                    name="name"
+                    value={form.name}
+                    onChange={handleFormChange}
+                    required
+                    fullWidth
+                  />
 
-        <Dialog open={isAddOpen} onClose={handleAddClose} fullWidth>
-          <form onSubmit={handleAddSubmit}>
-            <DialogTitle>Add Product</DialogTitle>
-            <DialogContent>
-              <Box
-                sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 2 }}
-              >
-                <TextField
-                  label="Name"
-                  variant="standard"
-                  name="name"
-                  value={form.name}
-                  onChange={handleFormChange}
-                  required
-                  fullWidth
-                />
+                  <TextField
+                    label="Category"
+                    name="category"
+                    variant="standard"
+                    value={form.category}
+                    onChange={handleFormChange}
+                    required
+                    fullWidth
+                    helperText="e.g. Electronics, Home, Apparel"
+                  />
+                  <TextField
+                    label="Description"
+                    variant="standard"
+                    name="description"
+                    value={form.description}
+                    onChange={handleFormChange}
+                    required
+                    fullWidth
+                  />
+                  <TextField
+                    label="Price"
+                    name="price"
+                    type="number"
+                    variant="standard"
+                    inputProps={{ step: "0.01", min: 0 }}
+                    value={form.price}
+                    onChange={handleFormChange}
+                    required
+                    fullWidth
+                  />
 
-                <TextField
-                  label="Category"
-                  name="category"
-                  variant="standard"
-                  value={form.category}
-                  onChange={handleFormChange}
-                  required
-                  fullWidth
-                  helperText="e.g. Electronics, Home, Apparel"
-                />
-                <TextField
-                  label="Description"
-                  variant="standard"
-                  name="description"
-                  value={form.description}
-                  onChange={handleFormChange}
-                  required
-                  fullWidth
-                />
-                <TextField
-                  label="Price"
-                  name="price"
-                  type="number"
-                  variant="standard"
-                  inputProps={{ step: "0.01", min: 0 }}
-                  value={form.price}
-                  onChange={handleFormChange}
-                  required
-                  fullWidth
-                />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="inStock"
+                        checked={form.inStock}
+                        onChange={handleFormChange}
+                      />
+                    }
+                    label="In Stock"
+                  />
+                </Box>
+              </DialogContent>
 
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="inStock"
-                      checked={form.inStock}
-                      onChange={handleFormChange}
-                    />
-                  }
-                  label="In Stock"
-                />
-              </Box>
-            </DialogContent>
-
-            <DialogActions>
-              <Button onClick={handleAddClose} color="error">
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ borderRadius: "50px" }}
-              >
-                Add Product
-              </Button>
-            </DialogActions>
-          </form>
-        </Dialog>
+              <DialogActions>
+                <Button onClick={handleAddClose} color="error">
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ borderRadius: "50px" }}
+                >
+                  Add Product
+                </Button>
+              </DialogActions>
+            </form>
+          </Dialog>
+        </Box>
       </ThemeProvider>
-    </>
+    </Box>
   );
 }
 
